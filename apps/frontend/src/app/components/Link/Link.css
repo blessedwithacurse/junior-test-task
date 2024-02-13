@@ -1,0 +1,9 @@
+.link {
+  color: blue; /* Default link color */
+  text-decoration: underline; /* Underline the link */
+  cursor: pointer; /* Show pointer cursor on hover */
+}
+
+.link:hover {
+  color: darkblue; /* Change color on hover */
+}

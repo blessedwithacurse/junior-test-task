@@ -1,0 +1,46 @@
+.ads-container {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(250px, 0fr)); 
+  gap: 20px;
+}
+.wrapper {
+  background-color: #dcdde3;
+  height: 100vh;
+}
+.ads-container-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
+
+.header {
+  background-color: #dcdde3;
+  display: flex;
+  justify-content: center;
+  padding-top: 30px;
+  align-items: center;
+}
+.title {
+  font-size: 30px;
+}
+.filters-btn {
+  margin-left: 20px;
+  width: 80px;
+  height: 30px;
+  border: 1px solid #1471b8;
+  border-radius: 3px;
+  background-color: #4d78a3;
+  font-size: 14px;
+  color: #fff;
+}
+.filters-btn:hover {
+  cursor: pointer;
+}
+.no-ads-msg-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+.no-ads-msg {
+  font-size: 20px;
+}

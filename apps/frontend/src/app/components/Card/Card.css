@@ -1,0 +1,58 @@
+
+.card {
+  display: flex;
+  flex-direction: column;
+  width: 250px; 
+  border: none; 
+  border-radius: 8px; 
+  background-color: #fff; 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+  transition: transform 0.3s ease, box-shadow 0.3s ease; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+}
+
+.icon:hover {
+  cursor: pointer;
+}
+
+.thumbnail {
+  width: 100%;
+  margin-bottom: 40px;
+}
+.title-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.card:hover {
+  transform: translateY(-4px); 
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); 
+  cursor: pointer;
+}
+.card-title {
+  width: 200px;
+  font-size: 16px;
+  padding-right: 5px;
+  overflow: hidden; 
+  white-space: nowrap; 
+  text-overflow: ellipsis; 
+  font-weight: 500;
+}
+.card-title:hover {
+  text-decoration: underline;
+}
+.card-description {
+  font-size: 16px;
+  margin-bottom: 5px;
+}
+
+.card-price,
+.card-city,
+.card-district,
+.card-created-at {
+  font-size: 14px;
+  margin-bottom: 3px;
+}
