@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { AdType } from '../../types/ad';
 import axios from 'axios';
 import Loader from '../Loader/Loader';
