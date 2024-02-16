@@ -1,3 +1,5 @@
+'use client'
+
 import React, {useState, useEffect} from 'react';
 import './AdsList.css'; 
 import axios, { AxiosError } from 'axios';
@@ -8,9 +10,26 @@ import Loader from '../Loader/Loader';
 import Card from '../Card/Card';
 import "react-toastify/dist/ReactToastify.css";
 import FiltersDialog from '../FiltersDialog/FiltersDialog';
+import { useQuery } from "@tanstack/react-query";
+
+const fetchAds = async (): Promise<AdType[]> => {
+  try {
+    const response = await axios.get('/api/ads');
+    if (!response) {
+      throw new Error(`Failed to fetch post`);
+    }
+    return response.data.results
+  } catch(e) {
+    console.error(e)
+    throw new Error ('something went wrong') 
+  }
+};
 
 const AdsList = () => {
-
+  const { isPending, error, data } = useQuery({
+    queryKey: ["ads"],
+    queryFn: fetchAds
+  })
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
@@ -19,7 +38,6 @@ const AdsList = () => {
   const [loading, setLoading] = useState(true);
   const [ads, setAds] = useState<AdType[]>([]);
   const [isOpen, setIsOpen] = useState(false);
-  const [noAdsFoundMessage, setNoAdsFoundMessage] = useState('lOlOLss')
 
   const openDialog = () => {
     setIsOpen(true);
@@ -28,25 +46,13 @@ const AdsList = () => {
   const closeDialog = () => {
     setIsOpen(false);
   };
+
   const toastId = React.useRef(null);
 
-  const fetchAds = async (): Promise<AdType[]> => {
-    try {
-      const isToastActive = toast.isActive('errorToast')
-      if(isToastActive) {
-        toast.dismiss({ containerId: "toastContainer" })
-      }
-      const response = await axios.get('/api/ads');
-      setAds(response.data.results)
-      return response.data;
+  // const notify = () => toastId.current = toast.error('error');
 
-    } catch (error) {
-      handleApiError(error as AxiosError<ErrorType>);
-      return []; 
-    } finally {
-      setLoading(false);
-    }
-  };
+  // const dismiss = () =>  toast.dismiss(toastId.current);
+
   const handleFecthFilteredAds = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const filterURL = `/api/ads?minPrice=${minPrice}&maxPrice=${maxPrice}&search=${searchQuery}`;
@@ -56,7 +62,6 @@ const AdsList = () => {
       closeDialog();
       return response.data.results;
     } catch (error) {
-      handleApiError(error as AxiosError<ErrorType>)
       console.error('Error fetching filtered ads:', error);
     }
   };
@@ -65,15 +70,9 @@ const AdsList = () => {
     fetchAds();
   }, []);
 
-  const handleApiError = (error: AxiosError<ErrorType>) => {
-    if (error.response && error.response.status === 500) {
-      toast.error(`An error occured while fetching the data: ${error.message}`, {
-        toastId: 'errorToast'
-      })
-    } else {
-      console.error('Unexpected error:', error);
-    }
-  };
+
+  if (isPending) return "Loading...";
+  if (error) return "An error has occurred: " + error.message
 
   return (
       <div className='wrapper'>
@@ -99,7 +98,7 @@ const AdsList = () => {
           <div className='ads-container-wrapper'>
             <div className='ads-container'>
                 {
-                  ads.map((ad) => (
+                  data.map((ad) => (
                     <>
                       <Card 
                         title={ad.title}

@@ -1,4 +1,3 @@
-'use client'
 import AdsList from './components/AdsList/AdsList';
 
 const Index = () => {
