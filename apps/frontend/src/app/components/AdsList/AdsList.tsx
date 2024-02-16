@@ -4,19 +4,22 @@ import React, {useState, useEffect} from 'react';
 import './AdsList.css'; 
 import axios, { AxiosError } from 'axios';
 import { AdType } from '../../types/ad';
-import { ErrorType } from '../../types/error';
 import { ToastContainer, toast } from 'react-toastify';
 import Loader from '../Loader/Loader';
 import Card from '../Card/Card';
 import "react-toastify/dist/ReactToastify.css";
 import FiltersDialog from '../FiltersDialog/FiltersDialog';
 import { useQuery } from "@tanstack/react-query";
+import { FilterType } from '../../types/filterType';
 
-const fetchAds = async (): Promise<AdType[]> => {
+const fetchAds = async (filters: FilterType): Promise<AdType[]> => {
   try {
     const response = await axios.get('/api/ads');
     if (!response) {
       throw new Error(`Failed to fetch post`);
+    }
+    if(Object.keys(filters).length) {
+
     }
     return response.data.results
   } catch(e) {
@@ -26,17 +29,15 @@ const fetchAds = async (): Promise<AdType[]> => {
 };
 
 const AdsList = () => {
+  const [filters, setFilters] = useState<FilterType>({})
+
   const { isPending, error, data } = useQuery({
-    queryKey: ["ads"],
-    queryFn: fetchAds
+    queryKey: ["ads", filters],
+    queryFn: async () => {
+      const data = await fetchAds(filters)
+      return data
+    },
   })
-  const [minPrice, setMinPrice] = useState('');
-  const [maxPrice, setMaxPrice] = useState('');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [city, setCity] = useState('');
-  const [district, setDistrict] = useState('');
-  const [loading, setLoading] = useState(true);
-  const [ads, setAds] = useState<AdType[]>([]);
   const [isOpen, setIsOpen] = useState(false);
 
   const openDialog = () => {
@@ -47,32 +48,9 @@ const AdsList = () => {
     setIsOpen(false);
   };
 
-  const toastId = React.useRef(null);
 
-  // const notify = () => toastId.current = toast.error('error');
-
-  // const dismiss = () =>  toast.dismiss(toastId.current);
-
-  const handleFecthFilteredAds = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const filterURL = `/api/ads?minPrice=${minPrice}&maxPrice=${maxPrice}&search=${searchQuery}`;
-    try {
-      const response = await axios.get(filterURL);
-      setAds(response.data.results)
-      closeDialog();
-      return response.data.results;
-    } catch (error) {
-      console.error('Error fetching filtered ads:', error);
-    }
-  };
-
-  useEffect(() => {
-    fetchAds();
-  }, []);
-
-
-  if (isPending) return "Loading...";
-  if (error) return "An error has occurred: " + error.message
+  if (isPending) return <Loader/>
+  if (error) return toast.error(`An error occured while fetching the data: ${error.message}`)
 
   return (
       <div className='wrapper'>
@@ -83,13 +61,10 @@ const AdsList = () => {
             </button>
             {isOpen && (
             <FiltersDialog
-              maxPrice={maxPrice}
-              minPrice={minPrice}
-              city={city}
-              district={district}
-              search={searchQuery}
-              handleFilterSearch={handleFecthFilteredAds}
-              onChangeMaxPrice={(e) => setMaxPrice(e.target.value)}
+              maxPrice={filters.maxPrice}
+              minPrice={filters.minPrice}
+              search={filters.search}
+              onChangeMaxPrice={(e) => setFilters(e.target.value)}
               onChangeMinPrice={(e) => setMinPrice(e.target.value)}
               onChangeSearchQuery={(e) => setSearchQuery(e.target.value)}
               onClose={closeDialog}/>
@@ -111,12 +86,7 @@ const AdsList = () => {
                 ))}
             </div>
           </div>
-          {/* <div className='no-ads-msg-container'>
-            <span className='no-ads-msg'>
-              {noAdsFoundMessage ? noAdsFoundMessage : ''}
-            </span>
-          </div> */}
-        <ToastContainer
+          <ToastContainer
             position="top-center"
             autoClose={2000}
             hideProgressBar={false}
@@ -125,12 +95,10 @@ const AdsList = () => {
             rtl={false}
             pauseOnFocusLoss
             draggable
-            containerId={'toastContainer'}
             pauseOnHover
             theme="dark"
         />
-        {loading && <Loader />}
-    </div>
+      </div>
   );
 };
 

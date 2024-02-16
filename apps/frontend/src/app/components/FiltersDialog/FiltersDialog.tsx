@@ -7,11 +7,11 @@ import AdsList from '../AdsList/AdsList';
 interface DialogProps {
   onClose: () => void;
   handleFilterSearch: (e: React.FormEvent<HTMLFormElement>) => {};
-  minPrice: string;
-  maxPrice: string;
+  minPrice: number;
+  maxPrice: number;
   search: string;
-  city: string;
-  district: string;
+  city?: string;
+  district?: string;
   onChangeMinPrice: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onChangeSearchQuery: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onChangeMaxPrice: (e: React.ChangeEvent<HTMLInputElement>) => void;

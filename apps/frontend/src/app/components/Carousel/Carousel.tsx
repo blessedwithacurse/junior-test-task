@@ -1,16 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './Carousel.css'; 
 
 interface CarouselProps {
-  images: string[]; 
+  images: string[] | undefined; 
 }
 
 const Carousel: React.FC<CarouselProps> = ({ images }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  useEffect(() => {
-    console.log(images)
-  },[])
+  if(!images) return null;
 
   const nextImage = () => {
     setCurrentImageIndex((prevIndex) => (prevIndex === images.length - 1 ? 0 : prevIndex + 1));
